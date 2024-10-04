@@ -10,10 +10,8 @@ class Category extends Model
 {
     use HasFactory, SoftDeletes;
 
+    // Melindungi id agar tidak di insert manual
     protected $guarded = [
         'id'
     ];
-
-    
-
 }

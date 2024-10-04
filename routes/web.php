@@ -1,10 +1,12 @@
 <?php
 
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\CourseQuestionController;
 use App\Http\Controllers\CourseStudentController;
 use App\Http\Controllers\LearningController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StudentAnswerController;
+use App\Models\CourseQuestion;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -35,15 +37,15 @@ Route::middleware('auth')->group(function () {
 
         Route::resource('courses', CourseController::class)->middleware('role:teacher');
 
-        Route::get('/course/question/create/{course}', [CourseController::class], 'create')
+        Route::get('/course/question/create/{course}', [CourseQuestionController::class, 'create'])
         ->middleware('role:teacher')
         ->name('course.create.question');
 
-        Route::post('/course/question/save/{course}', [CourseController::class], 'store')
+        Route::post('/course/question/save/{course}', [CourseQuestionController::class, 'store'])
         ->middleware('role:teacher')
         ->name('course.create.question.store');
 
-        Route::resource('course_question', CourseController::class)
+        Route::resource('course_question', CourseQuestionController::class)
         ->middleware('role:teacher');
 
         Route::get('/course/students/show/{course}', [CourseStudentController::class,  'index'])

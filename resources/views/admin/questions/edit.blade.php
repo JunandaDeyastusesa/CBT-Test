@@ -243,7 +243,7 @@
                                 @if ($courseQuestion->type == 'image' && $courseQuestion->question)
                                 <img src="{{ asset('storage/' . $courseQuestion->question) }}"
                                     class="thumbnail-icon w-full h-full object-cover" alt="thumbnail">
-                                @endifgit
+                                @endif
                             </div>
                         </div>
 

@@ -166,7 +166,10 @@
                     <a href="{{route('dashboard.courses.index')}}"
                         class="text-[#7F8190] last:text-[#0A090B] last:font-semibold">Manage Courses</a>
                     <span class="text-[#7F8190] last:text-[#0A090B]">/</span>
-                    <a href="#" class="text-[#7F8190] last:text-[#0A090B] last:font-semibold">Course Details</a>
+                    <a href="{{route('dashboard.courses.show', $course)}}"
+                        class="text-[#7F8190] last:text-[#0A090B] last:font-semibold">Course Details</a>
+                    <span class="text-[#7F8190] last:text-[#0A090B]">/</span>
+                    <a href="#" class="text-[#7F8190] last:text-[#0A090B] last:font-semibold">Update Question</a>
                 </div>
             </div>
             <div class="header ml-[70px] pr-[70px] w-[940px] flex items-center justify-between mt-10">
@@ -221,11 +224,10 @@
                         <label class="font-bold flex items-center gap-[10px]">
                             <input type="number" name="question[number]" min="0" max="500"
                                 class="w-[70px] h-[40px] p-[5px] border border-[#EEEEEE] rounded-md text-center outline-none"
-                                placeholder="NO" value="{{$courseQuestion->number ?? 0}}"/>
+                                placeholder="NO" value="{{$courseQuestion->number ?? 0}}" />
                         </label>
                     </div>
-                    <p class="font-semibold">Question</p>
-
+                
                     <div class="flex items-center gap-2 flex-grow">
                         <!-- Text input -->
                         <div id="text-question"

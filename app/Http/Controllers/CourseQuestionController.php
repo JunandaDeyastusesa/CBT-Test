@@ -122,9 +122,79 @@ class CourseQuestionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, CourseQuestion $courseQuestion)
+        public function update(Request $request, CourseQuestion $courseQuestion)
     {
-        //
+        try {
+            $request->validate([
+                'question.image' => 'image|max:3000|mimes:png,jpg,jpeg,svg',
+                'answers.*.type' => 'string|in:text,image',
+                'answers.*.score' => 'integer|min:0|max:100',
+                'answers.*.image' => 'image|max:3000|mimes:png,jpg,jpeg,svg',
+            ]);
+
+            DB::beginTransaction();
+
+            // Simpan data pertanyaan yang sudah ada
+            $questionData = [
+                'type' => $request->input('question.type'),
+            ];
+
+            // Jika ada perubahan dari image ke text atau perubahan image
+            if ($request->input('question.type') === 'text') {
+                if ($courseQuestion->type === 'image' && $courseQuestion->question) {
+                    // Hapus image lama dari storage
+                    Storage::delete($courseQuestion->question);
+                }
+                $questionData['question'] = $request->input('question.text');
+            } elseif ($request->hasFile('question.image')) {
+                // Jika ada file image baru, hapus image lama
+                if ($courseQuestion->type === 'image' && $courseQuestion->question) {
+                    Storage::delete($courseQuestion->question);
+                }
+                $imagePath = $request->file('question.image')->store('questions', 'public');
+                $questionData['question'] = $imagePath;
+            }
+
+            // Update pertanyaan
+            $courseQuestion->update($questionData);
+
+            // Update jawaban
+            foreach ($request->input('answers') as $i => $answer) {
+                $answerModel = $courseQuestion->answers[$i];
+                $answerData = [
+                    'type' => $answer['type'],
+                    'score' => $answer['score'] ?? 0,
+                ];
+
+                // Jika ada perubahan dari image ke text atau perubahan image
+                if ($answer['type'] === 'text') {
+                    if ($answerModel->type === 'image' && $answerModel->answer) {
+                        // Hapus image lama dari storage
+                        Storage::delete($answerModel->answer);
+                    }
+                    $answerData['answer'] = $answer['text'];
+                } elseif ($request->hasFile("answers.{$i}.image")) {
+                    if ($answerModel->type === 'image' && $answerModel->answer) {
+                        // Hapus image lama dari storage
+                        Storage::delete($answerModel->answer);
+                    }
+                    $imagePath = $request->file("answers.{$i}.image")->store('answers', 'public');
+                    $answerData['answer'] = $imagePath;
+                }
+
+                // Update jawaban
+                $answerModel->update($answerData);
+            }
+
+            DB::commit();
+            return redirect()->route('dashboard.courses.show', $courseQuestion->course_id);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw ValidationException::withMessages([
+                'system_error' => ['System error!', $e->getMessage()],
+            ]);
+        }
     }
 
     /**

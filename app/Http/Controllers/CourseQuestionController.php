@@ -3,8 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Course;
+use App\Models\CourseAnswer;
 use App\Models\CourseQuestion;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 
 class CourseQuestionController extends Controller
 {
@@ -32,9 +36,63 @@ class CourseQuestionController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, Course $course)
     {
         //
+        try {
+            $request->validate([
+                'question.image' => 'image|max:3000|mimes:png,jpg,jpeg,svg',
+                'answers.*.type' => 'string|in:text,image',
+                'answers.*.score' => 'integer|min:0|max:100',
+                'answers.*.image' => 'image|max:3000|mimes:png,jpg,jpeg,svg',
+            ]);
+
+            DB::beginTransaction();
+
+            $questionData = [
+                'number' => $course->questions()->max('number') + 1,
+                'type' => $request->input('question.type'),
+                'course_id' => $course->id,
+            ];
+
+            // Simpan file gambar untuk question jika ada
+            if ($request->hasFile('question.image')) {
+                $imagePath = $request->file('question.image')->store('questions', 'public');
+                $questionData['question'] = $imagePath;
+            } else {
+                $questionData['question'] = $request->input('question.text');
+            }
+            
+            // Menyimpan pertanyaan menggunakan relasi
+            $question = $course->questions()->create($questionData);
+
+            foreach ($request->input('answers') as $i => $answer) {
+                $answerData = [
+                    'type' => $answer['type'],
+                    'score' => $answer['score'] ?? 0,
+                    'course_question_id' => $question->id,
+                ];
+
+                // Cek apakah input answer adalah teks atau gambar
+                if ($answer['type'] === 'image' && $request->hasFile("answers.{$i}.image")) {
+                    $imagePath = $request->file("answers.{$i}.image")->store('answers', 'public');
+                    $answerData['answer'] = $imagePath;
+                } else {
+                    $answerData['answer'] = $answer['text'];
+                }
+
+                CourseAnswer::create($answerData);
+            }
+
+            DB::commit();
+            return redirect()->route('dashboard.courses.show', $course->id);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $error = ValidationException::withMessages([
+                'system_error' => ['System error!', $e->getMessage()],
+            ]);
+            throw $error;
+        }
     }
 
     /**
@@ -51,6 +109,14 @@ class CourseQuestionController extends Controller
     public function edit(CourseQuestion $courseQuestion)
     {
         //
+        $course = $courseQuestion->course;
+        $students = $course->students()->orderBy('id','DESC')->get();
+        return view('admin.questions.edit', [
+            'courseQuestion' => $courseQuestion,
+            'course' => $course,
+            'students' => $students
+        ]);
+
     }
 
     /**

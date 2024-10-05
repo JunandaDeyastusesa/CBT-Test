@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('course_questions', function (Blueprint $table) {
             $table->id();
+            $table->integer('number');
+            $table->string('type');
             $table->string('question');
             $table->foreignId('course_id')->constrained()->onDelete('cascade');
             $table->softDeletes();

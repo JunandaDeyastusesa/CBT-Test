@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->integer('number');
             $table->string('type');
-            $table->string('question');
+            $table->longText('question');
             $table->foreignId('course_id')->constrained()->onDelete('cascade');
             $table->softDeletes();
             $table->timestamps();

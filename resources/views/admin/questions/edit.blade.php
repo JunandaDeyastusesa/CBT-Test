@@ -213,9 +213,17 @@
                 @csrf
                 @method('PUT')
                 <h2 class="font-bold text-2xl">Edit Question</h2>
-
-                <!-- Question Input Area -->
                 <div class="flex flex-col gap-[10px]">
+
+                    <!-- Question -->
+                    <div class="flex items-center gap-6 flex-grow">
+                        <p class="font-semibold">Question</p>
+                        <label class="font-bold flex items-center gap-[10px]">
+                            <input type="number" name="question[number]" min="0" max="500"
+                                class="w-[70px] h-[40px] p-[5px] border border-[#EEEEEE] rounded-md text-center outline-none"
+                                placeholder="NO" value="{{$courseQuestion->number ?? 0}}"/>
+                        </label>
+                    </div>
                     <p class="font-semibold">Question</p>
 
                     <div class="flex items-center gap-2 flex-grow">

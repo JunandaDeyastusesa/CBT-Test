@@ -125,6 +125,7 @@
                 </div>
             </a>
         </div>
+
         <div id="menu-content" class="flex flex-col w-full pb-[30px]">
             <div class="nav flex justify-between p-5 border-b border-[#EEEEEE]">
                 <form
@@ -207,6 +208,7 @@
                     @endforeach
                 </ul>
             @endif
+            
             <form method="POST" enctype="multipart/form-data" action="{{route('dashboard.course.create.question.store', $course)}}" id="add-question"
                 class="mx-[70px] mt-[30px] flex flex-col gap-5">
                 @csrf
@@ -224,7 +226,7 @@
                             </div>
                             <input type="text"
                                 class="font-semibold placeholder:text-[#7F8190] placeholder:font-normal w-full outline-none"
-                                placeholder="Write the question" name="question[text]"> 
+                                placeholder="Write the question" name="question[text]">
                         </div>
 
                         <!-- Image preview -->

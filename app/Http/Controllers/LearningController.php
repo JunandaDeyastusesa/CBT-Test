@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class LearningController extends Controller
 {
     public function index()
     {
-        return view('student.courses.learning');
-
+        return 'Ini halaman student, welcome...';
     }
 }

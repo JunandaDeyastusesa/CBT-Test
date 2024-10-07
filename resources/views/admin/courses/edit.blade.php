@@ -166,11 +166,11 @@
                     <a href="{{route('dashboard.courses.index')}}" class="text-[#7F8190] last:text-[#0A090B] last:font-semibold">Manage
                         Courses</a>
                     <span class="text-[#7F8190] last:text-[#0A090B]">/</span>
-                    <a href="#" class="text-[#7F8190] last:text-[#0A090B] last:font-semibold ">New Course</a>
+                    <a href="#" class="text-[#7F8190] last:text-[#0A090B] last:font-semibold ">Update Course</a>
                 </div>
             </div>
             <div class="header flex flex-col gap-1 px-5 mt-5">
-                <h1 class="font-extrabold text-[30px] leading-[45px]">New Course</h1>
+                <h1 class="font-extrabold text-[30px] leading-[45px]">Update Course</h1>
                 <p class="text-[#7F8190]">Provide high quality for best students</p>
             </div>
 

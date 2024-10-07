@@ -167,7 +167,10 @@
                     <a href="{{route('dashboard.courses.index')}}"
                         class="text-[#7F8190] last:text-[#0A090B] last:font-semibold">Manage Courses</a>
                     <span class="text-[#7F8190] last:text-[#0A090B]">/</span>
-                    <a href="#" class="text-[#7F8190] last:text-[#0A090B] last:font-semibold">Course Details</a>
+                    <a href="{{route('dashboard.courses.show', $course)}}"
+                        class="text-[#7F8190] last:text-[#0A090B] last:font-semibold">Course Details</a>
+                    <span class="text-[#7F8190] last:text-[#0A090B]">/</span>
+                    <a href="#" class="text-[#7F8190] last:text-[#0A090B] last:font-semibold">Create Question</a>
                 </div>
             </div>
             <div class="header ml-[70px] pr-[70px] w-[940px] flex items-center justify-between mt-10">
@@ -200,22 +203,30 @@
             </div>
 
             @if ($errors->any())
-                <ul>
-                    @foreach ($errors as $error)
-                        <li class="py-5 px-5 bg-red-700 text-white">
-                            {{$error}}
-                        </li>
-                    @endforeach
-                </ul>
+            <ul>
+                @foreach ($errors as $error)
+                <li class="py-5 px-5 bg-red-700 text-white">
+                    {{$error}}
+                </li>
+                @endforeach
+            </ul>
             @endif
-            
             <form method="POST" enctype="multipart/form-data" action="{{route('dashboard.course.create.question.store', $course)}}" id="add-question"
                 class="mx-[70px] mt-[30px] flex flex-col gap-5">
                 @csrf
                 <h2 class="font-bold text-2xl">Add New Question</h2>
+
+                <!-- Question -->
                 <div class="flex flex-col gap-[10px]">
-                    <p class="font-semibold">Question</p>
-                    <!-- Question Input Area -->
+                    <div class="flex items-center gap-6 flex-grow">
+                        <p class="font-semibold">Question</p>
+                        <label class="font-bold flex items-center gap-[10px]">
+                            <input type="number" name="question[number]" min="0" max="500"
+                                class="w-[70px] h-[40px] p-[5px] border border-[#EEEEEE] rounded-md text-center outline-none"
+                                placeholder="NO" />
+                        </label>
+                    </div>
+
                     <div class="flex items-center gap-2 flex-grow">
                         <!-- Text input -->
                         <div id="text-question"
@@ -311,13 +322,14 @@
                         <label class="font-semibold flex items-center gap-[10px]">
                             <input type="number" name="answers[{{$i}}][score]" min="0" max="100"
                                 class="w-[70px] h-[40px] p-[5px] border border-[#EEEEEE] rounded-md text-center outline-none"
-                                placeholder="Score" value="0"/>
+                                placeholder="Score" value="0" />
                         </label>
                 </div>
                 @endfor
 
                 <!-- QUESTION END -->
-                <button type="submit" class="w-[500px] h-[52px] p-[14px_20px] bg-[#6436F1] rounded-full font-bold text-white transition-all duration-300 hover:shadow-[0_4px_15px_0_#6436F14D] text-center">
+                <button type="submit"
+                    class="w-[500px] h-[52px] p-[14px_20px] bg-[#6436F1] rounded-full font-bold text-white transition-all duration-300 hover:shadow-[0_4px_15px_0_#6436F14D] text-center">
                     Save Question</button>
             </form>
         </div>

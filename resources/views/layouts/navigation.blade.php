@@ -16,16 +16,10 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
                 </div>
-
+                @role('teacher')
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('dashboard.courses.index')" :active="request()->routeIs('dashboard.courses.index')">
                         {{ __('Manage Course') }}
-                    </x-nav-link>
-                </div>
-
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard.learning.index')" :active="request()->routeIs('dashboard.learning.index')">
-                        {{ __('Student Menu') }}
                     </x-nav-link>
                 </div>
             </div>

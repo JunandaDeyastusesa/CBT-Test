@@ -50,7 +50,7 @@ class CourseQuestionController extends Controller
             DB::beginTransaction();
 
             $questionData = [
-                'number' => $course->questions()->max('number') + 1,
+                'number' => $request->input('question.number'),
                 'type' => $request->input('question.type'),
                 'course_id' => $course->id,
             ];
@@ -137,6 +137,7 @@ class CourseQuestionController extends Controller
             // Simpan data pertanyaan yang sudah ada
             $questionData = [
                 'type' => $request->input('question.type'),
+                'number' => $request->input('question.number')
             ];
 
             // Jika ada perubahan dari image ke text atau perubahan image
@@ -202,6 +203,40 @@ class CourseQuestionController extends Controller
      */
     public function destroy(CourseQuestion $courseQuestion)
     {
-        //
+        // Begin a database transaction
+        DB::beginTransaction();
+
+        try {
+            // Check if the question has an image and delete it from storage
+            if ($courseQuestion->type === 'image' && $courseQuestion->question) {
+                Storage::disk('public')->delete($courseQuestion->question);
+            }
+
+            // Get all answers related to this question
+            $answers = $courseQuestion->answers;
+
+            // Loop through the answers and delete images if the answer type is image
+            foreach ($answers as $answer) {
+                if ($answer->type === 'image' && $answer->answer) {
+                    Storage::disk('public')->delete($answer->answer);
+                }
+            }
+
+            // Delete the question and all related answers
+            $courseQuestion->answers()->delete();
+            $courseQuestion->delete();
+
+            // Commit the transaction
+            DB::commit();
+
+            // Redirect or return a success response
+            return redirect()->route('dashboard.courses.show', $courseQuestion->course_id);
+        } catch (\Exception $e) {
+            // Rollback the transaction in case of an error
+            DB::rollBack();
+
+            // Handle the exception and return an error response
+            return redirect()->back()->withErrors(['error' => 'Failed to delete the question: ' . $e->getMessage()]);
+        }
     }
 }

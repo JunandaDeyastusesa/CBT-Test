@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('course_answers', function (Blueprint $table) {
             $table->id();
             $table->string('type');
-            $table->string('answer');
+            $table->longText('answer');
             $table->foreignId('course_question_id')->constrained()->onDelete('cascade');
             $table->integer('score');
             $table->softDeletes();

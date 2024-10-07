@@ -166,7 +166,10 @@
                     <a href="{{ route('dashboard.courses.index') }}"
                         class="text-[#7F8190] last:text-[#0A090B] last:font-semibold">Manage Courses</a>
                     <span class="text-[#7F8190] last:text-[#0A090B]">/</span>
-                    <a href="#" class="text-[#7F8190] last:text-[#0A090B] last:font-semibold">Course Details</a>
+                    <a href="{{route('dashboard.courses.show', $course)}}"
+                        class="text-[#7F8190] last:text-[#0A090B] last:font-semibold">Course Details</a>
+                    <span class="text-[#7F8190] last:text-[#0A090B]">/</span>
+                    <a href="#" class="text-[#7F8190] last:text-[#0A090B] last:font-semibold">Update Question</a>
                 </div>
             </div>
             <div class="header ml-[70px] pr-[70px] w-[940px] flex items-center justify-between mt-10">
@@ -214,10 +217,17 @@
                 @csrf
                 @method('PUT')
                 <h2 class="font-bold text-2xl">Edit Question</h2>
-
-                <!-- Question Input Area -->
                 <div class="flex flex-col gap-[10px]">
-                    <p class="font-semibold">Question</p>
+
+                    <!-- Question -->
+                    <div class="flex items-center gap-6 flex-grow">
+                        <p class="font-semibold">Question</p>
+                        <label class="font-bold flex items-center gap-[10px]">
+                            <input type="number" name="question[number]" min="0" max="500"
+                                class="w-[70px] h-[40px] p-[5px] border border-[#EEEEEE] rounded-md text-center outline-none"
+                                placeholder="NO" value="{{$courseQuestion->number ?? 0}}" />
+                        </label>
+                    </div>
 
                     <div class="flex items-center gap-2 flex-grow">
                         <!-- Text input -->
@@ -270,42 +280,43 @@
                     <p class="font-semibold">Answers</p>
 
                     @foreach ($courseQuestion->answers as $i => $answer)
-                        <div class="flex items-center gap-4">
-                            <div class="flex items-center gap-2 flex-grow">
-                                <!-- Text input area -->
-                                <div id="text-answer-{{ $i }}"
-                                    class="flex items-center w-[500px] h-[52px] p-[14px_16px] rounded-full border border-[#EEEEEE] focus-within:border-2 focus-within:border-[#0A090B] {{ $answer->type == 'image' ? 'hidden' : '' }}">
-                                    <div class="mr-[14px] w-6 h-6 flex items-center justify-center overflow-hidden">
-                                        <img src="{{ asset('/images/icons/edit.svg') }}"
-                                            class="h-full w-full object-contain" alt="icon">
-                                    </div>
-                                    <input type="text"
-                                        class="font-semibold placeholder:text-[#7F8190] placeholder:font-normal w-full outline-none"
-                                        placeholder="Write better answer option"
-                                        name="answers[{{ $i }}][text]"
-                                        value="{{ $answer->answer ?? '' }}">
+                    <div class="flex items-center gap-4">
+                        <div class="flex items-center gap-2 flex-grow">
+                            <!-- Text input area -->
+
+                            <div id="text-answer-{{$i}}"
+                                class="flex items-center w-[500px] h-[52px] p-[14px_16px] rounded-full border border-[#EEEEEE] focus-within:border-2 focus-within:border-[#0A090B]">
+                                <div class="mr-[14px] w-6 h-6 flex items-center justify-center overflow-hidden">
+                                    <img src="{{asset('/images/icons/edit.svg')}}" class="h-full w-full object-contain"
+                                        alt="icon">
                                 </div>
+                                <input type="text"
+                                    class="font-semibold placeholder:text-[#7F8190] placeholder:font-normal w-full outline-none"
+                                    placeholder="Write better answer option" name="answers[{{$i}}][text]"
+                                    value="{{ $answer->text ?? '' }}">
+                            </div>
 
                                 <!-- Image preview -->
                                 <input type="file" name="answers[{{ $i }}][image]"
                                     id="icon-{{ $i }}" class="peer hidden"
                                     onchange="previewFile({{ $i }})" data-empty="true">
 
-                                <div id="image-preview-{{ $i }}"
-                                    class="{{ $answer->type == 'image' ? '' : 'hidden' }} relative w-[150px] h-[150px] overflow-hidden peer-data-[empty=true]:border-[3px] peer-data-[empty=true]:border-dashed peer-data-[empty=true]:border-[#EEEEEE]">
-                                    <div
-                                        class="relative file-preview z-10 w-full h-full {{ $answer->type == 'image' ? '' : 'hidden' }}">
-                                        @if ($answer->type == 'image' && $answer->answer)
-                                            <img src="{{ asset('storage/' . $answer->answer) }}"
-                                                class="thumbnail-icon w-full h-full object-cover" alt="thumbnail">
-                                        @endif
-                                    </div>
+                            <div id="image-preview-{{$i}}"
+                                class="{{ $answer->type == 'image' ? '' : 'hidden' }} relative w-[150px] h-[150px] overflow-hidden peer-data-[empty=true]:border-[3px] peer-data-[empty=true]:border-dashed peer-data-[empty=true]:border-[#EEEEEE]">
+                                <div
+                                    class="relative file-preview z-10 w-full h-full {{ $answer->type == 'image' ? '' : 'hidden' }}">
+                                    @if ($answer->type == 'image' && $answer->image)
+                                    <img src="{{ asset('storage/' . $answer->image) }}"
+                                        class="thumbnail-icon w-full h-full object-cover" alt="thumbnail">
+                                    @endif
                                 </div>
+                            </div>
 
-                                <button id="image-answer-{{ $i }}" type="button"
-                                    class="{{ $answer->type == 'image' ? '' : 'hidden' }} flex shrink-0 p-[10px_15px] items-center rounded-full bg-[#0A090B] text-white text-base"
-                                    onclick="document.getElementById('icon-{{ $i }}').click()">Add
-                                    File</button>
+                            <button id="image-answer-{{$i}}" type="button"
+                                class="{{ $answer->type == 'image' ? '' : 'hidden' }} flex shrink-0 p-[10px_15px] items-center rounded-full bg-[#0A090B] text-white text-base"
+                                onclick="document.getElementById('icon-{{$i}}').click()">
+                                Add File
+                            </button>
 
                                 <!-- Dropdown text and image -->
                                 <select name="answers[{{ $i }}][type]"
@@ -385,32 +396,19 @@
             var reader = new FileReader();
             var file = fileInput.files[0]; // Get the first file from the input
 
-            reader.onloadend = function() {
-                // Check if the thumbnail image element exists
-                var img = preview.querySelector('.thumbnail-icon');
-
-                if (!img) {
-                    // Create img element if it doesn't exist
-                    img = document.createElement('img');
-                    img.classList.add('thumbnail-icon', 'w-full', 'h-full', 'object-cover');
-                    preview.appendChild(img); // Append the newly created image element to the preview div
-                }
-
-                // Update src attribute with the uploaded file
-                img.src = reader.result;
-
-                // Remove the 'hidden' class to display the preview
-                preview.classList.remove('hidden');
-            }
-
-            reader.readAsDataURL(file); // Convert file to base64
-            fileInput.setAttribute('data-empty', 'false'); // Set data attribute for custom CSS
-        } else {
-            // Hide preview if no file is selected
-            preview.classList.add('hidden');
-            fileInput.setAttribute('data-empty', 'true');
+        reader.onloadend = function() {
+            var img = preview.querySelector('.thumbnail-icon'); // Get the thumbnail image element
+            img.src = reader.result; // Update src attribute with the uploaded file
+            preview.classList.remove('hidden'); // Remove the 'hidden' class to display the preview
         }
+
+        reader.readAsDataURL(file);
+        fileInput.setAttribute('data-empty', 'false');
+    } else {
+        preview.classList.add('hidden'); // Hide preview if no file selected
+        fileInput.setAttribute('data-empty', 'true');
     }
+}
 </script>
 
 </html>

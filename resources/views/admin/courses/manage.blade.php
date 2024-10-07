@@ -102,14 +102,18 @@
                             <p class="font-semibold transition-all duration-300 hover:text-white">Settings</p>
                         </a>
                     </li>
+
                     <li>
-                        <a href="signin.html"
-                            class="p-[10px_16px] flex items-center gap-[14px] rounded-full h-11 transition-all duration-300 hover:bg-[#2B82FE]">
-                            <div>
-                                <img src="{{asset('images/icons/security-safe.svg')}}" alt="icon">
-                            </div>
-                            <p class="font-semibold transition-all duration-300 hover:text-white">Logout</p>
-                        </a>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit"
+                                class="p-[10px_16px] flex items-center gap-[14px] rounded-full h-11 transition-all duration-300 hover:bg-[#2B82FE]">
+                                <div>
+                                    <img src="{{asset('images/icons/security-safe.svg')}}" alt="icon">
+                                </div>
+                                <p class="font-semibold transition-all duration-300 hover:text-white">Logout</p>
+                            </button>
+                        </form>
                     </li>
                 </ul>
             </div>
@@ -171,11 +175,12 @@
             </div>
             <div class="header ml-[70px] pr-[70px] w-[940px] flex items-center justify-between mt-10">
                 <div class="flex gap-6 items-center">
-                    <div class="w-[150px] h-[150px] flex shrink-0 relative overflow-hidden rounded-full">
+                    <div class="w-[150px] h-[150px] flex shrink-0 relative overflow-hidden">
                         <img src="{{Storage::url($course->cover)}}" class="w-full h-full object-contain" alt="icon">
                         <p
                             class="p-[8px_16px] rounded-full bg-[#FFF2E6] font-bold text-sm text-[#F6770B] absolute bottom-0 transform -translate-x-1/2 left-1/2 text-nowrap">
-                            {{$course->category->name}}</p>
+                            {{$course->category->name}}
+                        </p>
                     </div>
                     <div class="flex flex-col gap-5">
                         <h1 class="font-extrabold text-[30px] leading-[45px]">{{$course->name}}</h1>
@@ -203,13 +208,14 @@
                     </a>
                     <div
                         class="dropdown-menu absolute hidden right-0 top-[66px] w-[270px] flex flex-col gap-4 p-5 border border-[#EEEEEE] bg-white rounded-[18px] transition-all duration-300 shadow-[0_10px_16px_0_#0A090B0D]">
-                        <a href="" class="flex gap-[10px] items-center">
+                        <a href="{{route('dashboard.course.course_students.create', $course)}}"
+                            class="flex gap-[10px] items-center">
                             <div class="w-5 h-5">
                                 <img src="{{asset('images/icons/profile-2user-outline.svg')}}" alt="icon">
                             </div>
                             <span class="font-semibold text-sm">Add Students</span>
                         </a>
-                        <a href="" class="flex gap-[10px] items-center">
+                        <a href="{{route('dashboard.courses.edit', $course)}}" class="flex gap-[10px] items-center">
                             <div class="w-5 h-5">
                                 <img src="{{asset('images/icons/note-favorite-outline.svg')}}" alt="icon">
                             </div>
@@ -290,7 +296,9 @@
                             <div class="flex items-center gap-[14px]">
                                 <a href="{{route('dashboard.course_question.edit', $question)}}"
                                     class="bg-[#0A090B] p-[14px_30px] rounded-full text-white font-semibold">Edit</a>
-                                <form action="">
+                                <form method="POST" action="{{route('dashboard.course_question.destroy', $question)}}">
+                                    @csrf
+                                    @method('DELETE')
                                     <button
                                         class="w-[52px] h-[52px] flex shrink-0 items-center justify-center rounded-full bg-[#FD445E]">
                                         <img src="{{ asset('images/icons/trash.svg') }}" alt="icon">

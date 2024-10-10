@@ -90,7 +90,7 @@
                             <p class="font-semibold transition-all duration-300 hover:text-white">Settings</p>
                         </a>
                     </li>
-                    
+
                     <li>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
@@ -202,7 +202,7 @@
                                 <p class="p-[8px_16px] rounded-full bg-[#D5EFFE] font-bold text-sm text-[#066DFE]">{{$course->category->name}}</p>
                             </div>
                         @endif
-                        
+
                         <div class="flex shrink-0 w-[120px] items-center">
                             <div class="relative h-[41px]">
                                 <div class="menu-dropdown w-[120px] max-h-[41px] overflow-hidden absolute top-0 p-[10px_16px] bg-white flex flex-col gap-3 border border-[#EEEEEE] transition-all duration-300 hover:shadow-[0_10px_16px_0_#0A090B0D] rounded-[18px]">
@@ -213,7 +213,7 @@
                                     <a href="{{route('dashboard.courses.show', $course)}}" class="flex items-center justify-between font-bold text-sm w-full">
                                         Manage
                                     </a>
-                                    <a href="course-students.html" class="flex items-center justify-between font-bold text-sm w-full">
+                                    <a href="{{route('dashboard.course.course_students.index', $course)}}" class="flex items-center justify-between font-bold text-sm w-full">
                                         Students
                                     </a>
                                     <a href="{{route('dashboard.courses.edit', $course)}}" class="flex items-center justify-between font-bold text-sm w-full">
@@ -251,7 +251,7 @@
             const clickedInsideDropdown = Array.from(menuDropdowns).some(function(dropdown) {
                 return dropdown.contains(event.target);
             });
-            
+
             if (!clickedInsideDropdown) {
                 menuDropdowns.forEach(function(dropdown) {
                     dropdown.classList.remove('max-h-fit');

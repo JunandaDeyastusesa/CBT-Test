@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use App\Models\CourseStudent;
+use App\Models\StudentAnswer;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -15,10 +16,32 @@ class CourseStudentController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        //
+    public function index(Course $course)
+{
+    $students = $course->students()->orderBy('id','DESC')->get();
+    $questions = $course->questions()->orderBy('id', 'DESC')->get();
+    $totalQuestions = $questions->count();
+
+    $correctAnswersCount = 0; // Inisialisasi variabel untuk menyimpan total skor
+
+    foreach ($students as $student) {
+        $studentAnswers = StudentAnswer::whereHas('question', function ($query) use ($course) {
+            $query->where('course_id', $course->id);
+        })->where('user_id', $student->id)->get();
+
+        // Hitung skor untuk jawaban siswa ini
+        $studentScore = $studentAnswers->sum('answer'); // Asumsikan kolom 'score' ada di tabel StudentAnswer
+        $correctAnswersCount += $studentScore; // Tambahkan skor siswa ke total skor
     }
+
+    return view("admin.students.index", [
+        'course' => $course,
+        'questions' => $questions,
+        'students' => $students,
+        'correctAnswersCount' => $correctAnswersCount
+    ]);
+}
+
 
     /**
      * Show the form for creating a new resource.
@@ -68,7 +91,7 @@ class CourseStudentController extends Controller
             $error = ValidationException::withMessages([
                 'system_error'=> ['System error!' . $e->getMessage()],
             ]);
-            throw $error;   
+            throw $error;
         }
     }
 

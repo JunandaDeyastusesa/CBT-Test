@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth.login');
 });
 
 Route::get('/dashboard', function () {
@@ -58,14 +58,14 @@ Route::middleware('auth')->group(function () {
 
         Route::post('/course/students/save/{course}', [CourseStudentController::class, 'store'])
         ->middleware('role:teacher')
-        ->name('course.course_students.store');  
+        ->name('course.course_students.store');
 
         // ROLE ===> STUDENT
-        Route::get('/learning/finished/{sourse}', [LearningController::class, 'learning_finished'])
+        Route::get('/learning/finished/{course}', [LearningController::class, 'learning_finished'])
         ->middleware('role:student')
         ->name('learning.finished.course');
 
-        Route::get('/learning/rapport/{sourse}', [LearningController::class, 'learning_rapport'])
+        Route::get('/learning/rapport/{course}', [LearningController::class, 'learning_rapport'])
         ->middleware('role:student')
         ->name('learning.rapport.course');
 
